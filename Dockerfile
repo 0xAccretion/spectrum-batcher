@@ -35,7 +35,9 @@ ENV PATH=/usr/lib/llvm-13/bin:$PATH
 RUN export CPLUS_INCLUDE_PATH=$(llvm-config --includedir):$CPLUS_INCLUDE_PATH
 RUN export LD_LIBRARY_PATH=$(llvm-config --libdir):$LD_LIBRARY_PATH
 
+ARG CACHE_BUST
 RUN git clone https://github.com/spectrum-finance/cardano-dex-backend.git /spectrum-batcher
+
 WORKDIR /spectrum-batcher
 RUN cabal clean
 RUN cabal update
