@@ -1,0 +1,69 @@
+version: "3.3"
+
+services:
+  cardano-node:
+    # image: alpine:latest
+    image: cardano-node:1.35.7
+    volumes:
+      - cardano-node-db:/data/db
+      - cardano-node-ipc:/ipc
+      - ./config/mainnet:/config
+    restart: on-failure
+    # command: tail -f /dev/null
+    command:
+      - "run"
+      - "--config /config/mainnet-config.json"
+      - "--topology /config/mainnet-topology.json"
+      - "--database-path /data/db"
+      - "--socket-path /ipc/node.socket"
+    healthcheck:
+      # Ping the EKG port to see if it responds.
+      # Assuming if EKG isn't up then the rest of cardano-node isn't either.
+      test: ["CMD-SHELL", "curl -f 127.0.0.1:12788 || exit 1"]
+      interval: 60s
+      timeout: 10s
+      retries: 5
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+  spectrum-cardano-backend:
+    image: spectrumlabs/spectrum-cardano-backend:1.0.2
+    # image: alpine:latest
+    volumes:
+      - spectrum-backend-volume:/data
+      - ./config/mainnet:/config
+      - /Users/rawriclark/Cardano/spectrum-batcher/keys/cypher.json:/etc/cypher.json
+      - ./scripts:/scripts
+      - ./dcConfigs/dcSpectrumConfig.dhall:/mnt/spectrum/config.dhall
+      - cardano-node-ipc:/ipc
+    restart: on-failure
+    depends_on:
+      - cardano-node
+    # command: tail -f /dev/null
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+volumes:
+  cardano-node-db:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /Users/rawriclark/Cardano/db
+  cardano-node-ipc:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /tmp
+  spectrum-backend-volume:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /Users/rawriclark/Cardano/spectrum-batcher/data
+
