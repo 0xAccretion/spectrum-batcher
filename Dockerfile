@@ -47,7 +47,10 @@ RUN cabal configure --disable-tests --disable-benchmarks -f-scrypt -O2
 RUN cabal install amm-executor-app
 
 FROM ubuntu:22.04
-RUN apt-get update -y && apt-get upgrade -y && apt-get install librocksdb-dev libnuma-dev -y
+RUN apt-get update -y && apt-get upgrade -y && apt-get install librocksdb-dev libnuma-dev x509-util curl -y
+RUN x509-util system
+# TEST CARDANO EXPLORER
+RUN curl https://explorer.spectrum.fi/cardano/mainnet/v1/outputs/31a497ef6b0033e66862546aa2928a1987f8db3b8f93c59febbe0f47b14a83c6:0
 COPY --from=builder /usr/lib/llvm-13 /usr/lib/llvm-13
 COPY --from=builder /usr/local/lib /usr/local/lib
 COPY --from=builder /root/.cabal/store/ghc-8.10.7 /root/.cabal/store/ghc-8.10.7
