@@ -46,7 +46,7 @@ jobs:
         run: echo "::set-output name=hash::$(git ls-remote https://github.com/spectrum-finance/cardano-dex-backend.git HEAD | cut -f1)"
         
       - name: Build the Docker image
-        run: docker build . --file Dockerfile --tag 0xaccretion/spectrum-batcher:${{ github.sha }} --build-arg CACHE_BUST=${{ steps.get_commit.outputs.hash }}
+        run: docker build . --file Dockerfile --tag 0xaccretion/spectrum-batcher:${{ github.sha }} --build-arg CACHE_BUST=${{ steps.get_commit.outputs.hash }} --build-arg git_branch=update-dc-version-to-101
       
       - name: Docker Login
         # You may pin to the exact commit or the version.
