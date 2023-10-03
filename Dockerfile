@@ -36,7 +36,7 @@ RUN export CPLUS_INCLUDE_PATH=$(llvm-config --includedir):$CPLUS_INCLUDE_PATH
 RUN export LD_LIBRARY_PATH=$(llvm-config --libdir):$LD_LIBRARY_PATH
 
 ARG CACHE_BUST
-ARG git_branch = master
+ARG git_branch=master
 RUN git clone https://github.com/spectrum-finance/cardano-dex-backend.git /spectrum-batcher
 RUN cd /spectrum-batcher && git checkout ${git_branch}
 
